@@ -6,7 +6,8 @@ import Header from "./components/Header";
 import Introduction from "./components/Introduction";
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import digitsArr from "./digits";
+import digitsList from "./digits";
+import { ListGroup, ListGroupItem } from "react-bootstrap";
 
 function App() {
 
@@ -16,9 +17,11 @@ function App() {
 
   var [clicksRemaining, setClicksRemaining] = useState(3);
   var [luckyNum, setLuckyNum] = useState("");
-  const [userNum, setUserNum] = useState([]);
+  var [currUserInput, setCurrUserInput] = useState("");
+  const [userInputList, setUserInputList] = useState([]);
   const [clues, setClues] = useState([]);
-  var [digits, setDigits] = useState(digitsArr);
+  const [digits, setDigits] = useState(digitsList);
+
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -32,35 +35,73 @@ function App() {
       array.splice(randomIndex, 1);
     }
     setLuckyNum(finalNumber);
+    setDigits(prevValue => {
+      return prevValue.map(element => {
+        element.isDisabled = false;
+        return element;
+      })
+    });
   }
 
   function handleResetButtonClick() {
     setLuckyNum("");
   }
 
+  function handleNextButtonClick() {
+    setCurrUserInput("");
+    setClicksRemaining(3);
+    setClues([]);
+    setDigits(prev => {
+      return prev.map(element => {
+        element.isDisabled = false;
+        return element;
+      })
+    });
+  }
+
+
+
   function handleNumberButtonClick(event) {
+    console.log("handleNumberButtonClick");
 
+    // 1.1 Save User Input
     const buttonValue = event.target.value;
-    var tempArr = userNum;
-    tempArr.push(buttonValue);
-    setUserNum(tempArr);
-    //console.log(userNum);
+    currUserInput += buttonValue;
+    setCurrUserInput(currUserInput);
 
+
+    // 1.2 Update and save button state
+    setDigits(prev => {
+      return prev.map(element => {
+        if (element.value === buttonValue) {
+          element.isDisabled = true;
+        }
+        return element;
+      })
+    })
+
+
+    // 2.0 Keep track of clicks remaining
     clicksRemaining -= 1;
     setClicksRemaining(clicksRemaining);
+
+
+    // 2.1 If max clicks reached, compare user input with lucky number
     if (clicksRemaining === 0) {
+      var tempList = userInputList;
+      tempList.push(currUserInput);
+      setUserInputList(tempList);
+
       // Compare user input with the randomly generated number
       for (var i=0; i<3; i++) {
         for (var j=0; j<3; j++) {
-          if (luckyNum.charAt(i) === userNum[j]) {
+          if (luckyNum.charAt(i) === currUserInput.charAt(j)) {
             if (i === j) {
-              console.log("There is a correct number and correct position match!");
               circleCount++;
               setCircleCount(circleCount);
 
               break;
             } else {
-              console.log("There is a correct number and wrong position match!");
               triangleCount++;
               setTriangleCount(triangleCount);
               break;
@@ -68,20 +109,28 @@ function App() {
           }
         }
       }
-
-      console.log("circles = " + circleCount + " triangles = " + triangleCount);
     }
 
+  }
 
-    var tempArr = digits.map(function(element) {
-      if (element.value === buttonValue) {
-        element.isDisabled = true;
-      }
-      return element;
-    });
+  function createNumberButton(digit) {
+    return (
+      <NumberButton
+        key={digit.id}
+        disabled={digit.isDisabled}
+        variant={digit.variant}
+        value={digit.value}
+      />
+    );
+  }
 
-    console.log(tempArr);
-    setDigits(tempArr);
+  // TODO: Can refactor to an individual jsx file
+  function NumberButton(props) {
+    return (
+      <Button value={props.value} variant={props.variant} disabled={props.disabled} onClick={handleNumberButtonClick}>
+        {props.value}
+      </Button>
+    );
   }
 
   return (
@@ -94,24 +143,23 @@ function App() {
       </ButtonGroup>
 
       <br />
+      <p>Random number is... {luckyNum}</p>
       
+
       <div className="numberbox-container">
-        <ToggleButtonGroup type="checkbox">
-          {digits.map(function(element) {
-            return <ToggleButton
-            variant={element.variant}
-            disabled={element.isDisabled}
-            value={element.value}
-            onChange={handleNumberButtonClick}
-          >
-            {element.value}
-          </ToggleButton>
-          })}
-        </ToggleButtonGroup>
+          {digits.map(createNumberButton)}
       </div>
 
-      <p>Your input is... {}</p>
-      <p>Random number is... {luckyNum}</p>
+      
+
+      <p>Your inputs: </p>
+      <div>
+        <ListGroup>
+          
+        </ListGroup>
+      </div>
+
+      <Button size="lg" variant="primary" onClick={handleNextButtonClick}>Next</Button>
 
     </div>
   );
