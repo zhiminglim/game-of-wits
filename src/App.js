@@ -4,8 +4,6 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Header from "./components/Header";
 import Introduction from "./components/Introduction";
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import digitsList from "./digits";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 
@@ -45,12 +43,19 @@ function App() {
 
   function handleResetButtonClick() {
     setLuckyNum("");
+    setUserInputList([]);
+    setDigits(prevValue => {
+      return prevValue.map(element => {
+        element.isDisabled = true;
+        return element;
+      })
+    });
   }
 
-  function handleNextButtonClick() {
+  function prepareNextMove() {
     setCurrUserInput("");
     setClicksRemaining(3);
-    setClues([]);
+    //setClues([]);
     setDigits(prev => {
       return prev.map(element => {
         element.isDisabled = false;
@@ -58,7 +63,6 @@ function App() {
       })
     });
   }
-
 
 
   function handleNumberButtonClick(event) {
@@ -109,6 +113,10 @@ function App() {
           }
         }
       }
+      // TODO: special case for X
+
+
+      prepareNextMove();
     }
 
   }
@@ -152,14 +160,17 @@ function App() {
 
       
 
-      <p>Your inputs: </p>
-      <div>
+      <h2>History: </h2>
+      <div className="history-container">
         <ListGroup>
-          
+          {userInputList.map(input => {
+            return (
+              <ListGroupItem>{input}</ListGroupItem>
+            );
+          })}
         </ListGroup>
+        
       </div>
-
-      <Button size="lg" variant="primary" onClick={handleNextButtonClick}>Next</Button>
 
     </div>
   );

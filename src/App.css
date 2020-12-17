@@ -42,3 +42,15 @@
   font-size: 1rem;
   line-height: 0.5;
 }
+
+.history-container {
+  margin: auto;
+  text-align: center;
+  width: 200px;
+}
+
+.inputs-list {
+  padding: 12px;
+  width: 200px;
+  margin: 16px;
+}
