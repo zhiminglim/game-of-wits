@@ -19,6 +19,7 @@ function App() {
   const [userInputList, setUserInputList] = useState([]);
   const [clues, setClues] = useState([]);
   const [digits, setDigits] = useState(digitsList);
+  const [winGame, setWinGame] = useState(false);
 
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
@@ -41,7 +42,7 @@ function App() {
     });
   }
 
-  function handleResetButtonClick() {
+  function handleResetGame() {
     setLuckyNum("");
     setUserInputList([]);
     setDigits(prevValue => {
@@ -55,7 +56,6 @@ function App() {
   function prepareNextMove() {
     setCurrUserInput("");
     setClicksRemaining(3);
-    //setClues([]);
     setDigits(prev => {
       return prev.map(element => {
         element.isDisabled = false;
@@ -66,7 +66,6 @@ function App() {
 
 
   function handleNumberButtonClick(event) {
-    console.log("handleNumberButtonClick");
 
     // 1.1 Save User Input
     const buttonValue = event.target.value;
@@ -113,12 +112,38 @@ function App() {
           }
         }
       }
-      // TODO: special case for X
 
+      // 3.0 Update clues for user
+      var currentClue;
+      if (circleCount === 0 && triangleCount === 0) {
+        currentClue = wrongPosWrongNumInd;
+      } else {
+        currentClue = circleCount + " " + correctNumCorrectPosInd + ", " + triangleCount + " " + correctNumWrongPosInd;
+      }
+      const clueArr = clues;
+      clueArr.push(currentClue);
+      setClues(clueArr);
 
-      prepareNextMove();
+      if (circleCount === 3) {
+        prepareWinGame();
+      } else {
+        setCircleCount(0);
+        setTriangleCount(0);
+        prepareNextMove();
+      }
+
     }
 
+  }
+
+  function prepareWinGame() {
+    setWinGame(true);
+    setDigits(prevValue => {
+      return prevValue.map(element => {
+        element.isDisabled = true;
+        return element;
+      })
+    });
   }
 
   function createNumberButton(digit) {
@@ -147,7 +172,7 @@ function App() {
       <Introduction />
       <ButtonGroup aria-label="Basic example">
         <Button size="lg" variant="primary" onClick={handleStartButtonClick}>Start</Button>
-        <Button size="lg" variant="warning" onClick={handleResetButtonClick}>Reset</Button>
+        <Button size="lg" variant="warning" onClick={handleResetGame}>Reset</Button>
       </ButtonGroup>
 
       <br />
@@ -170,6 +195,20 @@ function App() {
           })}
         </ListGroup>
         
+      </div>
+
+      <div>
+      <ListGroup>
+          {clues.map(clue => {
+            return (
+              <ListGroupItem>{clue}</ListGroupItem>
+            );
+          })}
+        </ListGroup>
+      </div>
+
+      <div>
+        {winGame && <p>Congratulations! You have cleared the game!</p>}
       </div>
 
     </div>
