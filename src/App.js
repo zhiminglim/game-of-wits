@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import './App.css';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -16,8 +16,7 @@ function App() {
   var [clicksRemaining, setClicksRemaining] = useState(3);
   var [luckyNum, setLuckyNum] = useState("");
   var [currUserInput, setCurrUserInput] = useState("");
-  const [userInputList, setUserInputList] = useState([]);
-  const [clues, setClues] = useState([]);
+  const [historyList, setHistoryList] = useState([]);
   const [digits, setDigits] = useState(digitsList);
   const [winGame, setWinGame] = useState(false);
 
@@ -44,7 +43,10 @@ function App() {
 
   function handleResetGame() {
     setLuckyNum("");
-    setUserInputList([]);
+    setClicksRemaining(3);
+    setCurrUserInput("");
+    setHistoryList([]);
+    setWinGame(false);
     setDigits(prevValue => {
       return prevValue.map(element => {
         element.isDisabled = true;
@@ -72,7 +74,6 @@ function App() {
     currUserInput += buttonValue;
     setCurrUserInput(currUserInput);
 
-
     // 1.2 Update and save button state
     setDigits(prev => {
       return prev.map(element => {
@@ -83,17 +84,12 @@ function App() {
       })
     })
 
-
     // 2.0 Keep track of clicks remaining
     clicksRemaining -= 1;
     setClicksRemaining(clicksRemaining);
 
-
-    // 2.1 If max clicks reached, compare user input with lucky number
+    // 3.0 If max clicks reached, compare user input with lucky number
     if (clicksRemaining === 0) {
-      var tempList = userInputList;
-      tempList.push(currUserInput);
-      setUserInputList(tempList);
 
       // Compare user input with the randomly generated number
       for (var i=0; i<3; i++) {
@@ -102,7 +98,6 @@ function App() {
             if (i === j) {
               circleCount++;
               setCircleCount(circleCount);
-
               break;
             } else {
               triangleCount++;
@@ -113,17 +108,21 @@ function App() {
         }
       }
 
-      // 3.0 Update clues for user
+      // 3.1 Update clues for user
       var currentClue;
       if (circleCount === 0 && triangleCount === 0) {
         currentClue = wrongPosWrongNumInd;
       } else {
         currentClue = circleCount + " " + correctNumCorrectPosInd + ", " + triangleCount + " " + correctNumWrongPosInd;
       }
-      const clueArr = clues;
-      clueArr.push(currentClue);
-      setClues(clueArr);
 
+      // 3.2 Update History List for user
+      var tempList = historyList;
+      const historyAndClueString = currUserInput + " : " + currentClue;
+      tempList.push(historyAndClueString);
+      setHistoryList(tempList);
+
+      // 3.3 Check Win Conditions
       if (circleCount === 3) {
         prepareWinGame();
       } else {
@@ -131,7 +130,6 @@ function App() {
         setTriangleCount(0);
         prepareNextMove();
       }
-
     }
 
   }
@@ -174,37 +172,22 @@ function App() {
         <Button size="lg" variant="primary" onClick={handleStartButtonClick}>Start</Button>
         <Button size="lg" variant="warning" onClick={handleResetGame}>Reset</Button>
       </ButtonGroup>
-
       <br />
-      <p>Random number is... {luckyNum}</p>
-      
-
-      <div className="numberbox-container">
-          {digits.map(createNumberButton)}
-      </div>
-
-      
+      <br />
 
       <h2>History: </h2>
       <div className="history-container">
         <ListGroup>
-          {userInputList.map(input => {
+          {historyList.map(input => {
             return (
               <ListGroupItem>{input}</ListGroupItem>
             );
           })}
         </ListGroup>
-        
       </div>
 
-      <div>
-      <ListGroup>
-          {clues.map(clue => {
-            return (
-              <ListGroupItem>{clue}</ListGroupItem>
-            );
-          })}
-        </ListGroup>
+      <div className="numberbox-container">
+          {digits.map(createNumberButton)}
       </div>
 
       <div>
