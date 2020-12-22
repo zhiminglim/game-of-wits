@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Header from "./components/Header";
 import Introduction from "./components/Introduction";
+import NumberButton from  "./components/NumberButton";
 import digitsList from "./digits";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 
@@ -46,6 +47,8 @@ function App() {
     setClicksRemaining(3);
     setCurrUserInput("");
     setHistoryList([]);
+    setCircleCount(0);
+    setTriangleCount(0);
     setWinGame(false);
     setDigits(prevValue => {
       return prevValue.map(element => {
@@ -151,16 +154,8 @@ function App() {
         disabled={digit.isDisabled}
         variant={digit.variant}
         value={digit.value}
+        onClick={handleNumberButtonClick}
       />
-    );
-  }
-
-  // TODO: Can refactor to an individual jsx file
-  function NumberButton(props) {
-    return (
-      <Button value={props.value} variant={props.variant} disabled={props.disabled} onClick={handleNumberButtonClick}>
-        {props.value}
-      </Button>
     );
   }
 
