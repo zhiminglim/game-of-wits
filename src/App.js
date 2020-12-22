@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Header from "./components/Header";
 import Introduction from "./components/Introduction";
-import NumberButton from  "./components/NumberButton";
+import NumberGrid from "./components/NumberGrid";
 import digitsList from "./digits";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 
@@ -147,18 +147,6 @@ function App() {
     });
   }
 
-  function createNumberButton(digit) {
-    return (
-      <NumberButton
-        key={digit.id}
-        disabled={digit.isDisabled}
-        variant={digit.variant}
-        value={digit.value}
-        onClick={handleNumberButtonClick}
-      />
-    );
-  }
-
   return (
     <div className="App">
       <Header />
@@ -181,12 +169,13 @@ function App() {
         </ListGroup>
       </div>
 
-      <div className="numberbox-container">
-          {digits.map(createNumberButton)}
-      </div>
+      <NumberGrid 
+        listOfDigits={digits}
+        onNumberGridClick={handleNumberButtonClick}
+      />
 
       <div>
-        {winGame && <p>Congratulations! You have cleared the game!</p>}
+        {winGame && <p>Congratulations! You have wits!</p>}
       </div>
 
     </div>
