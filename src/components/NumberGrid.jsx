@@ -6,7 +6,7 @@ function NumberGrid(props) {
         <div className="numberbox-container">
             {props.listOfDigits.map((digit) => {
                 return (
-                    <NumberButton
+                    <NumberButton 
                         key={digit.id}
                         disabled={digit.isDisabled}
                         variant={digit.variant}
