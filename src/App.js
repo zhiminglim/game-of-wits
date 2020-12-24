@@ -169,7 +169,7 @@ function App() {
         </ListGroup>
       </div>
 
-      <NumberGrid 
+      <NumberGrid
         listOfDigits={digits}
         onNumberGridClick={handleNumberButtonClick}
       />
