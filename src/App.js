@@ -168,11 +168,14 @@ function App() {
           })}
         </ListGroup>
       </div>
-
-      <NumberGrid
-        listOfDigits={digits}
-        onNumberGridClick={handleNumberButtonClick}
-      />
+      
+      <div className="numberbox-main-container">
+        <NumberGrid
+          listOfDigits={digits}
+          onNumberGridClick={handleNumberButtonClick}
+        />
+      </div>
+      
 
       <div>
         {winGame && <p>Congratulations! You have wits!</p>}

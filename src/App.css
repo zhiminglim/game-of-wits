@@ -23,15 +23,25 @@
   /* font-size: calc(10px + 2vmin); */
 }
 
+.numberbox-main-container {
+  margin: auto;
+  height: 300px;
+  width: 300px;
+  padding: 2% 2%;
+}
+
 .numberbox-container {
-  padding: 2% 20%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  justify-self: center;
+  align-self: center;
 }
 
 .numberbox-digit {
-  border-radius: 1%;
+  border-radius: 0%;
   border-color: white;
+  min-height: 85px;
+  min-width: 85px;
 }
 
 .intro-container {
