@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 function NumberButton(props) {
     return (
         <div className="numberbox-digit">
-            <Button
+            <Button block size="lg" className="numberbox-digit"
                 value={props.value}
                 variant={props.variant}
                 disabled={props.disabled}

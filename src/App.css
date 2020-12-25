@@ -24,13 +24,14 @@
 }
 
 .numberbox-container {
-  padding: 0 20%;
+  padding: 2% 20%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
 .numberbox-digit {
-  
+  border-radius: 1%;
+  border-color: white;
 }
 
 .intro-container {
