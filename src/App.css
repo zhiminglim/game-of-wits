@@ -27,7 +27,7 @@
   margin: auto;
   height: 300px;
   width: 300px;
-  padding: 2% 2%;
+  padding: 20px 20px;
 }
 
 .numberbox-container {
@@ -57,7 +57,7 @@
 .intro-text-instruction {
   padding: 12px;
   font-size: 1rem;
-  line-height: 0.5;
+  line-height: 1;
 }
 
 .history-container {

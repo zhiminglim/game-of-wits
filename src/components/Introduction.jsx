@@ -9,7 +9,7 @@ function Introduction() {
       <Row>
         <Col>
           <p className="intro-text">
-            Witup! Welcome to this game! It's very simple... a random 3-digit number will be given, and you just have to guess it!
+            Hello! This game is very simple... a random 3-digit number will be given, and you just have to guess it!
           </p>
         </Col>
       </Row>
