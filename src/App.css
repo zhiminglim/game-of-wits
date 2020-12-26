@@ -19,8 +19,14 @@
   color: white;
 } */
 
-.app-container {
-  /* font-size: calc(10px + 2vmin); */
+.gameselect-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.numbergame-container {
+  margin-top: 30px;
 }
 
 .numberbox-main-container {
@@ -50,8 +56,8 @@
 }
 
 .intro-text {
-  padding: 12px;
-  font-size: 1.75rem;
+  padding: 20px;
+  font-size: 2rem;
 }
 
 .intro-text-instruction {
@@ -64,10 +70,4 @@
   margin: auto;
   text-align: center;
   width: 200px;
-}
-
-.inputs-list {
-  padding: 12px;
-  width: 200px;
-  margin: 16px;
 }

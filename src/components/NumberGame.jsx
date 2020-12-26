@@ -4,8 +4,9 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import digitsList from "../digits";
 import NumberGrid from "./NumberGrid";
+import NumberGameIntro from "./NumberGameIntro";
 
-function NumberGame() {
+function NumberGame3D() {
   const correctNumCorrectPosInd = "O",
         correctNumWrongPosInd = "△",
         wrongPosWrongNumInd = "X";
@@ -147,7 +148,8 @@ function NumberGame() {
   }
 
   return (
-    <div>
+    <div className="numbergame-container">
+      <NumberGameIntro />
       <ButtonGroup aria-label="Basic example">
         <Button size="lg" variant="primary" onClick={handleStartButtonClick}>
           Start
@@ -180,4 +182,4 @@ function NumberGame() {
   );
 }
 
-export default NumberGame;
+export default NumberGame3D;
