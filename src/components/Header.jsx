@@ -1,10 +1,23 @@
 import React from "react";
+import Navbar from "react-bootstrap/Navbar";
+import brandImg from "../assets/images/winner_gold.png";
 
 function Header() {
   return (
-    <div className="main-header">
-      <h1>Game of WITs</h1>
-    </div>
+    <Navbar bg="dark" variant="dark">
+      <div className="header-brand-container">
+        <Navbar.Brand href="/">
+          <img
+            alt=""
+            src={brandImg}
+            width="50"
+            height="50"
+            className="d-inline-block align-top"
+          />{" "}
+          Game of WITs
+        </Navbar.Brand>
+      </div>
+    </Navbar>
   );
 }
 
