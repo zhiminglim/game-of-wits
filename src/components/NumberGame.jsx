@@ -19,6 +19,7 @@ function NumberGame3D() {
   const [historyList, setHistoryList] = useState([]);
   const [digits, setDigits] = useState(digitsList);
   const [winGame, setWinGame] = useState(false);
+  const [startButton, setStartButton] = useState(true);
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -41,6 +42,8 @@ function NumberGame3D() {
         return element;
       });
     });
+
+    setStartButton(false);
   }
 
   function handleResetGame() {
@@ -57,6 +60,7 @@ function NumberGame3D() {
         return element;
       })
     });
+    setStartButton(true);
   }
 
   function prepareNextMove() {
@@ -147,16 +151,27 @@ function NumberGame3D() {
     });
   }
 
+  function showStartButton() {
+    return (
+      <Button size="lg" variant="primary" onClick={handleStartButtonClick}>
+        Start
+      </Button>
+    );
+  }
+
+  function showResetButton() {
+    return (
+      <Button size="lg" variant="warning" onClick={handleResetGame}>
+        Reset
+      </Button>
+    );
+  }
+
   return (
     <div className="numbergame-container">
       <NumberGameIntro />
       <ButtonGroup aria-label="Basic example">
-        <Button size="lg" variant="primary" onClick={handleStartButtonClick}>
-          Start
-        </Button>
-        <Button size="lg" variant="warning" onClick={handleResetGame}>
-          Reset
-        </Button>
+        {startButton ? showStartButton() : showResetButton()}
       </ButtonGroup>
       <br />
       <br />
