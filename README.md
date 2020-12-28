@@ -4,7 +4,8 @@ This project is an inspiration of previous mini-games I've played, and motivated
 
 ## Documentation
 
-This page is still on a WIP. Multiplayer features coming soon.
+This page is still on a WIP. Multiplayer features for game of 3D coming soon. 
+More games will be added once multiplayer support has been fine-tuned.
 
 ## Available Scripts
 
