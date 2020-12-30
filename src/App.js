@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import './App.css';
 import Header from "./components/Header";
-import NumberGame3D from "./components/NumberGame";
+import NumberGame3DIntro from "./components/NumberGame3DIntro";
 import Home from "./components/Home";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 function App() {
 
@@ -13,7 +13,7 @@ function App() {
         <Header />
       
         <Route exact path="/"><Home /></Route>
-        <Route path="/game-3d"><NumberGame3D /></Route>
+        <Route path="/game-3d"><NumberGame3DIntro /></Route>
       </div>
     </Router>
   );

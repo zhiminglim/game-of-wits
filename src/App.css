@@ -1,9 +1,11 @@
 .App {
   text-align: center;
+  background-color: #fcf8e8;
+  height: 100vh;
 }
 
 .main-header {
-  background-color: #282c34;
+  background-color: #df7861;
   padding: 8px 32px;
   color: white;
 }
@@ -75,4 +77,20 @@
   margin: auto;
   text-align: center;
   width: 200px;
+}
+
+.listgroup-container {
+  margin: auto;
+  text-align: center;
+  width: 50%;
+  padding: 12px;
+}
+
+.room-join {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  width: 30%;
 }
