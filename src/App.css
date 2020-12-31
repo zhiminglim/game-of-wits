@@ -6,7 +6,7 @@
 
 .main-header {
   background-color: #df7861;
-  padding: 8px 32px;
+  padding: 4px 32px;
   color: white;
 }
 
@@ -55,6 +55,11 @@
   border-color: white;
   min-height: 85px;
   min-width: 85px;
+}
+
+.numbergame-card-deck {
+  margin: auto;
+  width: 50%;
 }
 
 .intro-container {
