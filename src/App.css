@@ -1,7 +1,9 @@
+body {
+  background-color: #d0e8f2;
+}
+
 .App {
   text-align: center;
-  background-color: #fcf8e8;
-  height: 100vh;
 }
 
 .main-header {
@@ -59,7 +61,7 @@
 
 .numbergame-card-deck {
   margin: auto;
-  width: 50%;
+  width: 75%;
 }
 
 .intro-container {
@@ -84,18 +86,30 @@
   width: 200px;
 }
 
-.listgroup-container {
+.listgroup-playerlist {
   margin: auto;
-  text-align: center;
-  width: 50%;
+  width: 70%;
   padding: 12px;
 }
 
-.room-join {
+.inputgroup-formcontrol {
   margin: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 120px;
-  width: 30%;
+  height: 500px;
+  width: 60%;
 }
+
+.card-button {
+  margin: 10px;
+  justify-content: center;
+}
+
+.playerlist-listitem {
+  display: flex;
+  min-width: 200px;
+  border: 1px solid #456268;
+  justify-content: space-between;
+}
+

@@ -188,8 +188,8 @@ function NumberGame3D() {
       <h2>History: </h2>
       <div className="history-container">
         <ListGroup>
-          {historyList.map((input) => {
-            return <ListGroupItem>{input}</ListGroupItem>;
+          {historyList.map((input, index) => {
+            return <ListGroupItem key={index}>{input}</ListGroupItem>;
           })}
         </ListGroup>
       </div>
@@ -201,7 +201,7 @@ function NumberGame3D() {
         />
       </div>
 
-      <div>{winGame && <p>You Won!</p>}</div>
+      <div>{winGame && <h3>You Won!</h3>}</div>
     </div>
   );
 }
