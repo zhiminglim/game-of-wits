@@ -1,10 +1,14 @@
+body {
+  background-color: #d0e8f2;
+}
+
 .App {
   text-align: center;
 }
 
 .main-header {
-  background-color: #282c34;
-  padding: 8px 32px;
+  background-color: #df7861;
+  padding: 4px 32px;
   color: white;
 }
 
@@ -55,6 +59,11 @@
   min-width: 85px;
 }
 
+.numbergame-card-deck {
+  margin: auto;
+  width: 75%;
+}
+
 .intro-container {
   padding: 12px;
   margin-bottom: 20px;
@@ -76,3 +85,36 @@
   text-align: center;
   width: 200px;
 }
+
+.ranking-container {
+  margin: auto;
+  width: 200px;
+}
+
+.listgroup-playerlist {
+  margin: auto;
+  width: 70%;
+  padding: 12px;
+}
+
+.inputgroup-formcontrol {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  width: 60%;
+}
+
+.card-button {
+  margin: 10px;
+  justify-content: center;
+}
+
+.playerlist-listitem {
+  display: flex;
+  min-width: 200px;
+  border: 1px solid #456268;
+  justify-content: space-between;
+}
+

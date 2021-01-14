@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import digitsList from "../digits";
 import NumberGrid from "./NumberGrid";
-import NumberGameIntro from "./NumberGameIntro";
 
-function NumberGame3D() {
+function NumberGame3D(props) {
   const correctNumCorrectPosInd = "O",
         correctNumWrongPosInd = "△",
         wrongPosWrongNumInd = "X";
@@ -20,6 +19,16 @@ function NumberGame3D() {
   const [digits, setDigits] = useState(digitsList);
   const [winGame, setWinGame] = useState(false);
   const [startButton, setStartButton] = useState(true);
+
+
+  // Multiplayer
+  const isMultiplayer = useRef(props.multiplayer);
+  const socket = useRef(props.socket);
+
+  // useEffect(() => {
+    
+  // }, []);
+
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -149,6 +158,9 @@ function NumberGame3D() {
         return element;
       })
     });
+    if (isMultiplayer.current) {
+      socket.current.emit("playerWon", props.roomCode);
+    }
   }
 
   function showStartButton() {
@@ -169,7 +181,7 @@ function NumberGame3D() {
 
   return (
     <div className="numbergame-container">
-      <NumberGameIntro />
+    
       <ButtonGroup aria-label="Basic example">
         {startButton ? showStartButton() : showResetButton()}
       </ButtonGroup>
@@ -179,8 +191,8 @@ function NumberGame3D() {
       <h2>History: </h2>
       <div className="history-container">
         <ListGroup>
-          {historyList.map((input) => {
-            return <ListGroupItem>{input}</ListGroupItem>;
+          {historyList.map((input, index) => {
+            return <ListGroupItem key={index}>{input}</ListGroupItem>;
           })}
         </ListGroup>
       </div>
@@ -192,7 +204,7 @@ function NumberGame3D() {
         />
       </div>
 
-      <div>{winGame && <p>You Won!</p>}</div>
+      <div>{winGame && <h3>You Won!</h3>}</div>
     </div>
   );
 }
