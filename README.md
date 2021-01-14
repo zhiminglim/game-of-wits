@@ -12,10 +12,13 @@ Number hunt game. A 3-digit number is generated from the digits 1-9 without repe
 1. Fork this repository and checkout to dev branch
 
 2. Open backend/server.js and edit port number on line 2 from 3000 to 3001
+    ```javascript
+    const port = process.env.PORT || 3001;
+    ```
 
-3. Inside RoomJoin.jsx and RoomHost.jsx
+3. Open RoomJoin.jsx and RoomHost.jsx:
 
-4. Include "localhost:3001" when initializing socket.io
+    Include "localhost:3001" when initializing socket.io
     ```javascript
     socket.current = socketIOClient("localhost:3001");
     ```
