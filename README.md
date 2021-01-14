@@ -9,34 +9,25 @@ Number hunt game. A 3-digit number is generated from the digits 1-9 without repe
 
 ## Development
 
-1. Fork this repository and checkout to dev branch
-
-2. Open backend/server.js and edit port number on line 2 from 3000 to 3001
-    ```javascript
-    const port = process.env.PORT || 3001;
+1. Fork this repository and checkout to **dev** branch
+    ```
+    git checkout dev
     ```
 
-3. Open RoomJoin.jsx and RoomHost.jsx:
-
-    Include "localhost:3001" when initializing socket.io
-    ```javascript
-    socket.current = socketIOClient("localhost:3001");
+2. From the project directory, open 2 terminal tabs and first run the following to start the server
     ```
-
-5. From the project directory, open terminal and run the following to start the server
-    ```console
     cd backend/ && nodemon server.js
     ```
  
-6. Then open a new terminal tab and run the following to start react client app
-    ```console
+3. Then on the second tab, run the following to start react client app
+    ```
     npm run start-client
     ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The page will reload if you make edits. You will also see any lint errors in the console.\
+As we are using nodemon to run the server, any changes made on server.js will automatically refresh it.
 
 ## Deployment
 
