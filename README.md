@@ -25,7 +25,7 @@ Number hunt game. A 3-digit number is generated from the digits 1-9 without repe
     ```
     If later on at steps 3 or 4 you encounter issues with missing dependencies, run
     ```
-    npm -i <insert missing dependencies>
+    npm i <insert missing dependencies>
     ```
 
 3. From the project directory, open 2 terminal tabs and first run the following to start the server
