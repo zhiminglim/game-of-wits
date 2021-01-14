@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import digitsList from "../digits";
 import NumberGrid from "./NumberGrid";
 
-function NumberGame3D() {
+function NumberGame3D(props) {
   const correctNumCorrectPosInd = "O",
         correctNumWrongPosInd = "△",
         wrongPosWrongNumInd = "X";
@@ -20,15 +20,15 @@ function NumberGame3D() {
   const [winGame, setWinGame] = useState(false);
   const [startButton, setStartButton] = useState(true);
 
-  // const socket = io('ws://localhost:3000');
 
-  // socket.on('connect', () => {
-  //   // either with send()
-  //   socket.send('Hello!');
+  // Multiplayer
+  const isMultiplayer = useRef(props.multiplayer);
+  const socket = useRef(props.socket);
 
-  //   // or with emit() and custom event names
-  //   //socket.emit('salutations', 'Hello!', { 'mr': 'john' }, Uint8Array.from([1, 2, 3, 4]));
-  // });
+  // useEffect(() => {
+    
+  // }, []);
+
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -158,6 +158,9 @@ function NumberGame3D() {
         return element;
       })
     });
+    if (isMultiplayer.current) {
+      socket.current.emit("playerWon", props.roomCode);
+    }
   }
 
   function showStartButton() {

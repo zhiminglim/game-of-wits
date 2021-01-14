@@ -7,9 +7,9 @@ import NumberGame3D from "./NumberGame3D";
 
 function RoomHost(props) {
 
-  // testing for now
   const roomCode = "GREAT";
   const [players, setPlayers] = useState([]);
+  const [rankings, setRankings] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const socket = useRef();
   let history = useHistory();
@@ -17,20 +17,23 @@ function RoomHost(props) {
 
   useEffect(() => {
     console.log("init socket");
-    socket.current = socketIOClient("http://localhost:4001");
+    socket.current = socketIOClient();
 
     socket.current.emit("hostRoom", roomCode, props.name);
     console.log("hostRoom in progress (emit)");
 
     socket.current.on("updatePlayers", (data) => {
       console.log("host: updatePlayers");
-      // console.log(data);
       setPlayers(data);
     });
 
     socket.current.on("gameIsStarting", (data) => {
       console.log(data);
       setGameStarted(true);
+    });
+
+    socket.current.on("updateRankings", (data) => {
+      setRankings(data);
     })
     
     return () => {
@@ -38,6 +41,7 @@ function RoomHost(props) {
       socket.current.disconnect();
     }
   }, [props.name]);
+
 
   function handleStartButton() {
     socket.current.emit("startGame", roomCode);
@@ -77,7 +81,26 @@ function RoomHost(props) {
 
   function gameInProgress() {
     return (
-      <NumberGame3D />
+      <div>
+        <div className="ranking-container">
+          <h2>Rankings</h2>
+          <ListGroup>
+            {rankings.map((player, index) => {
+              return (
+                <ListGroupItem key={index} className="playerlist-listitem">
+                  <span>{index+1} : </span>
+                  <span>{player.name}</span>
+                </ListGroupItem>
+              );
+            })}
+          </ListGroup>
+        </div>
+        <NumberGame3D 
+          socket={socket.current}
+          multiplayer={true}
+          roomCode={roomCode}
+        />
+      </div>
     );
   }
 

@@ -1,24 +1,24 @@
 //jshint esversion:6
-const port = process.env.PORT || 4001;
+const port = process.env.PORT || 3000;
 const express = require("express");
 const path = require("path");
 const app = express();
 
 const http = require("http");
 const socketIo = require("socket.io");
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG, RSA_PKCS1_PADDING } = require("constants");
 
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
 
 // middlewares
-// app.use(express.static(path.join(__dirname, "..", "build")));
-// app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "..", "build")));
+app.use(express.static("public"));
 
 /* 
   As our react app is using routing, simply using the middleware is not going to work 
@@ -28,10 +28,10 @@ const io = socketIo(server, {
   any routes to handle that here, we will send the index.html file from build folder 
   to handle that and display the client-side route page.
 */
-// app.use((req, res) => {
-//   console.log(__dirname);
-//   res.sendFile(path.join(__dirname, "..", "build", "index.html"));
-// });
+app.use((req, res) => {
+  console.log(__dirname);
+  res.sendFile(path.join(__dirname, "..", "build", "index.html"));
+});
 
 app.get("/", (req, res) => {
   res.send({ response: "I am alive"}).status(200);
@@ -45,9 +45,10 @@ function Player(id, name, isReady) {
   this.isReady = isReady;
 }
 
-function GameRoom(roomCode, players) {
+function GameRoom(roomCode, players, rankings) {
   this.roomCode = roomCode;
   this.players = players;
+  this.rankings = rankings;
 }
 
 
@@ -69,7 +70,7 @@ io.on('connection', (socket) => {
     const playerList = [];
     playerList.push(player);
 
-    var gameRoom = new GameRoom(code, playerList);
+    var gameRoom = new GameRoom(code, playerList, []);
     
     // Keep track of local DB holding rooms and players
     globalRoomList.push(gameRoom);
@@ -150,13 +151,15 @@ io.on('connection', (socket) => {
 
     // Update DB level
     const matchedPlayer = (player) => player.id === socket.id;
-    var matchedPlayerFound = false;
+    // For search efficiency
+    var dbLevelUpdated = false;
 
     for (const room of globalRoomList) {
-      if (!matchedPlayerFound) {
+      if (!dbLevelUpdated) {
         if (room.players.some(matchedPlayer)) {
           room.players = room.players.filter(player => player.id !== socket.id);
           io.in(room.roomCode).emit("updatePlayers", room.players);
+          dbLevelUpdated = true;
         }
       } else {
         break;
@@ -171,6 +174,27 @@ io.on('connection', (socket) => {
     
     // sending to all clients in "game" room, including sender
     io.in(code).emit("gameIsStarting", "The game will start soon...");
+  })
+
+
+  socket.on("playerWon", (code) => {
+    console.log(socket.id + "has won the game in room " + code);
+
+    for (const room of globalRoomList) {
+      if (room.roomCode === code) {
+        playerWon = room.players.filter(player => player.id === socket.id);
+
+        const rankingsList = room.rankings;
+        rankingsList.push(playerWon[0]);
+        room.rankings = rankingsList;
+
+        // sending to all clients in "game" room, including sender
+        io.in(code).emit("updateRankings", room.rankings);
+        break;
+      }
+    }
+
+    console.log(JSON.stringify(globalRoomList));
   })
 
 });

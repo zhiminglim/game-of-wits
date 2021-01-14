@@ -86,6 +86,11 @@ body {
   width: 200px;
 }
 
+.ranking-container {
+  margin: auto;
+  width: 200px;
+}
+
 .listgroup-playerlist {
   margin: auto;
   width: 70%;
