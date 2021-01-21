@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, ButtonGroup, ListGroup, ListGroupItem } from "react-bootstrap";
-//import socket from "../service/socket";
 import socketIOClient from "socket.io-client";
 import NumberGame3D from "./NumberGame3D";
 
