@@ -25,10 +25,15 @@ function NumberGame3D(props) {
   const isMultiplayer = useRef(props.multiplayer);
   const socket = useRef(props.socket);
 
-  // useEffect(() => {
-    
-  // }, []);
+  useEffect(() => {
+    console.log("useEffect");
 
+    if (isMultiplayer.current) {
+      // Automatically start number grid
+      handleStartButtonClick();
+    }
+
+  }, []);
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -179,14 +184,22 @@ function NumberGame3D(props) {
     );
   }
 
+  function singlePlayerEntry() {
+    return (
+      <div>
+        <ButtonGroup aria-label="Basic example">
+          {startButton ? showStartButton() : showResetButton()}
+        </ButtonGroup>
+        <br />
+        <br />
+      </div>
+    );
+  }
+
   return (
     <div className="numbergame-container">
     
-      <ButtonGroup aria-label="Basic example">
-        {startButton ? showStartButton() : showResetButton()}
-      </ButtonGroup>
-      <br />
-      <br />
+      { !isMultiplayer.current && singlePlayerEntry() }
 
       <h2>History: </h2>
       <div className="history-container">
