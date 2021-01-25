@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { ListGroup, ListGroupItem, ProgressBar } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import digitsList from "../digits";
@@ -19,21 +19,44 @@ function NumberGame3D(props) {
   const [digits, setDigits] = useState(digitsList);
   const [winGame, setWinGame] = useState(false);
   const [startButton, setStartButton] = useState(true);
-
+  
+  // Timer
+  const [timerIsActive, setTimerIsActive] = useState(false);
+  const [progress, setProgress] = useState(100);
 
   // Multiplayer
   const isMultiplayer = useRef(props.multiplayer);
   const socket = useRef(props.socket);
 
-  useEffect(() => {
-    console.log("useEffect");
 
+  useEffect(() => {
     if (isMultiplayer.current) {
       // Automatically start number grid
       handleStartButtonClick();
     }
 
   }, []);
+
+  useEffect(() => {
+    let intervalId;
+    if (timerIsActive) {
+      intervalId = setInterval(() => setProgress(progress-20), 1000);
+
+      if (progress < 0) {
+        // Reset timer when progress reaches zero
+        setProgress(100);
+
+        // Add to moves history
+        var tempList = historyList;
+        tempList.push("Skipped.");
+        setHistoryList(tempList);
+      }
+    };
+    
+    return () => clearInterval(intervalId);
+
+  }, [timerIsActive, progress]);
+
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
   // But for the purpose of this simple program of just 9 digits, i think its alright to stick with splice()
@@ -58,6 +81,7 @@ function NumberGame3D(props) {
     });
 
     setStartButton(false);
+    setTimerIsActive(true);
   }
 
   function handleResetGame() {
@@ -75,6 +99,10 @@ function NumberGame3D(props) {
       })
     });
     setStartButton(true);
+
+    // Handle Timer
+    setTimerIsActive(false);
+    setProgress(100);
   }
 
   function prepareNextMove() {
@@ -151,11 +179,15 @@ function NumberGame3D(props) {
         setTriangleCount(0);
         prepareNextMove();
       }
+
+      // 3.4 Reset Timer
+      setProgress(100);
     }
 
   }
 
   function prepareWinGame() {
+    setTimerIsActive(false);
     setWinGame(true);
     setDigits(prevValue => {
       return prevValue.map(element => {
@@ -215,6 +247,7 @@ function NumberGame3D(props) {
           listOfDigits={digits}
           onNumberGridClick={handleNumberButtonClick}
         />
+        <ProgressBar now={progress}/>
       </div>
 
       <div>{winGame && <h3>You Won!</h3>}</div>
