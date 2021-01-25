@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ListGroup, ListGroupItem, ProgressBar } from "react-bootstrap";
+import { ProgressBar } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import digitsList from "../digits";
 import NumberGrid from "./NumberGrid";
+import ScrollableFeed from 'react-scrollable-feed';
+
 
 function NumberGame3D(props) {
   const correctNumCorrectPosInd = "O",
@@ -55,7 +57,7 @@ function NumberGame3D(props) {
     
     return () => clearInterval(intervalId);
 
-  }, [timerIsActive, progress]);
+  }, [timerIsActive, progress, historyList]);
 
 
   // Fisher-Yates Shuffle is said to be more efficient as it avoids the use of expensive array operations.
@@ -233,13 +235,13 @@ function NumberGame3D(props) {
     
       { !isMultiplayer.current && singlePlayerEntry() }
 
-      <h2>History: </h2>
-      <div className="history-container">
-        <ListGroup>
+      <h3>Moves History: </h3>
+      <div className="historylist-container">
+        <ScrollableFeed>
           {historyList.map((input, index) => {
-            return <ListGroupItem key={index}>{input}</ListGroupItem>;
-          })}
-        </ListGroup>
+              return <div className="historylist-item" key={index}>{input}</div>;
+            })}
+        </ScrollableFeed>
       </div>
 
       <div className="numberbox-main-container">
