@@ -1,5 +1,5 @@
 body {
-  background-color: #d0e8f2;
+  background-color: #f1f6f9;
 }
 
 .App {
@@ -66,6 +66,7 @@ body {
 
 .intro-container {
   padding: 12px;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -78,12 +79,28 @@ body {
   padding: 12px;
   font-size: 1rem;
   line-height: 1;
+  color: #14274e;
 }
 
-.history-container {
+.historylist-container {
   margin: auto;
   text-align: center;
-  width: 200px;
+  width: 300px;
+  height: 250px;
+  overflow: auto;
+  border: 1px solid #394867;
+  overflow-y: hidden;
+}
+
+.historylist-item {
+  overflow:hidden;
+  position: relative;
+  display: block;
+  height: 50px;
+  padding: 10px 25px;
+  /* margin-bottom: -1px; */
+  background-color: #f1f6f9;
+  border: 1px solid #14274e;
 }
 
 .ranking-container {
