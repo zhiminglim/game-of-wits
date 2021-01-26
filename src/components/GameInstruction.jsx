@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 
 function GameInstruction() {
   return (
-    <Container className="intro-container">
+    <Container className="game-intro-container">
       <Row>
         <Col>
           <div className="intro-text-instruction">

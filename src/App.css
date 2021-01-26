@@ -64,7 +64,7 @@ body {
   width: 75%;
 }
 
-.intro-container {
+.game-intro-container {
   padding: 12px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -134,4 +134,3 @@ body {
   border: 1px solid #456268;
   justify-content: space-between;
 }
-
