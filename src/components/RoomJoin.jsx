@@ -21,9 +21,9 @@ function RoomJoin(props) {
     console.log("init socket");
     socket.current = socketIOClient("localhost:3001");
     
-    socket.current.on("updatePlayers", (data) => {
+    socket.current.on("updatePlayers", (code, list) => {
       console.log("updatePlayers listening");
-      setPlayers(data);
+      setPlayers(list);
     });
 
     socket.current.on("gameIsStarting", (data) => {
@@ -35,19 +35,22 @@ function RoomJoin(props) {
       setRankings(data);
     })
 
+    socket.current.on("kickedFromRoom", () => {
+      history.goBack();
+    })
+
     return () => {
       console.log("unmounting");
       socket.current.disconnect();
     };
-  }, []);
+  }, [history]);
 
 
   function handleCodeEnter() {
-    socket.current.emit("findRoom", roomCode, (response) => {
+    socket.current.emit("findAndJoinRoom", roomCode, props.name, (response) => {
       console.log("client: findRoom " + response.status); // ok
       if (response.status === "ok") {
         setRoomFound(true);
-        socket.current.emit("joinRoom", roomCode, props.name);
       }
     });
   }
