@@ -1,6 +1,10 @@
 //jshint esversion:6
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
+require('dotenv').config({ path: "../.env" });
+var randomstring = require("randomstring");
+
 const express = require("express");
+const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
 
@@ -15,6 +19,39 @@ const io = socketIo(server, {
     methods: ["GET", "POST"]
   }
 });
+
+
+// ------------ START of Database Default Setup ------------ //
+const mongoURL = process.env.MONGO_URL;
+mongoose.connect(mongoURL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("MongoDB connected...")).catch(err => console.log(err));
+
+const game3DSchema = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  gameRoom: String,
+  players: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Player"
+  }]
+});
+
+const playerSchema = new mongoose.Schema({
+  name: String,
+  socketId: String,
+  room: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Game3D"
+  },
+  isReady: Boolean
+})
+
+const Game3D = mongoose.model("Game3D", game3DSchema);
+const Player = mongoose.model("Player", playerSchema);
+
+// ------------ End of Database Default Setup ------------ //
+
 
 // middlewares
 app.use(express.static(path.join(__dirname, "..", "build")));
@@ -34,144 +71,172 @@ app.use((req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send({ response: "I am alive"}).status(200);
+  res.send({ response: "I am alive" }).status(200);
 });
-
-var globalRoomList = [];
-
-function Player(id, name, isReady) {
-  this.id = id;
-  this.name = name;
-  this.isReady = isReady;
-}
-
-function GameRoom(roomCode, players, rankings) {
-  this.roomCode = roomCode;
-  this.players = players;
-  this.rankings = rankings;
-}
 
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log("socket.id = " + socket.id);
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    console.log("socket.id = " + socket.id);
   });
 
 
   // Hosts a room
-  socket.on("hostRoom", (code, username) => {
-    console.log("hostRoom = " + code + ", username = " + username);
+  socket.on("hostRoom", (username) => {
+    console.log("username = " + username);
 
-    var player = new Player(socket.id, username, false);
-    const playerList = [];
-    playerList.push(player);
+    // Generate 5 digit code
+    var gen = randomstring.generate({
+      length: 5,
+      charset: "alphanumeric",
+      capitalization: "uppercase"
+    });
 
-    var gameRoom = new GameRoom(code, playerList, []);
-    
-    // Keep track of local DB holding rooms and players
-    globalRoomList.push(gameRoom);
-    console.log(JSON.stringify(globalRoomList));
+    // Save to MongoDB
+    const game3D = new Game3D({
+      _id: new mongoose.Types.ObjectId(),
+      gameRoom: gen
+    });
 
-    // Join room via socket connection
-    socket.join(code);
-    io.in(code).emit("updatePlayers", playerList);
+    game3D.save(function (err) {
+      if (err) {
+        console.log("game3D save error = " + err);
+      } else {
+        // Room now exists, so lets create the player
+        const hostPlayer = new Player({
+          name: username,
+          socketId: socket.id,
+          room: game3D._id,
+          isReady: false
+        });
+
+        hostPlayer.save().then(savedDoc => {
+          savedDoc.populate("room").execPopulate(function (err, player) {
+            if (err) {
+              console.log(err);
+            } else {
+              // Join room via socket connection
+              socket.join(gen);
+              io.in(gen).emit("updatePlayers", gen, new Array(player));
+            }
+          });
+        });
+      }
+    });
   });
 
 
   // Search for game room with given code
-  socket.on("findRoom", (code, callback) => {
-    
-    if (globalRoomList.length > 0) {
-      globalRoomList.forEach(element => {
-        if (element.roomCode === code) {
-          callback({
-            status: "ok"
-          })
-        }
-      })
-    } else {
-      callback({
-        status: "no"
-      });
-    }
+  socket.on("findAndJoinRoom", (joinCode, playerName, callback) => {
+    console.log("findAndJoinRoom, joinCode = " + joinCode);
+
+    Game3D.findOne({ gameRoom: joinCode }, (err, foundRoom) => {
+      if (err) {
+        console.log("err msg = " + err);
+      } else {
+        //console.log(foundRoom);
+
+        const joinPlayer = new Player({
+          name: playerName,
+          socketId: socket.id,
+          room: foundRoom._id,
+          isReady: false
+        });
+
+        joinPlayer.save().then(savedPlayer => {
+          savedPlayer.populate("room").execPopulate(function (err, player) {
+            if (err) {
+              console.log(err);
+            } else {
+              //console.log("populated savedPlayer");
+
+              Player.find({ room: foundRoom._id }, (err, players) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  //console.log("players in common game room found");
+                  //console.log(players);
+
+                  // Join room via socket connection
+                  socket.join(joinCode);
+                  io.in(joinCode).emit("updatePlayers", joinCode, players);
+                  callback({
+                    status: "ok"
+                  });
+                }
+              })
+            }
+          });
+        });
+      }
+    })
   });
 
-  
-  // Joins an existing game room
-  socket.on("joinRoom", (code, username) => {
-    console.log("joining room " + code + " by " + username);
 
-    if (globalRoomList.length > 0) {
-      globalRoomList.forEach(element => {
-        if (element.roomCode === code) {
-          var player = new Player(socket.id, username, false);
-          const playerList = element.players;
-          playerList.push(player);
+  socket.on("hostLeaveRoom", (exitCode) => {
 
-          element.players = playerList;
-          socket.join(code);
-          io.in(code).emit("updatePlayers", playerList);
-        }
-      });
-    }
-
-    console.log(JSON.stringify(globalRoomList));
-
-  })
-
-
-  socket.on("kickedFromRoom", (roomCode) => {
-    socket.leave(roomCode);
-    // TODO: inform client
-  })
-  
-  socket.on("hostLeaveRoom", (roomCode) => {
-    console.log("hostLeaveRoom, roomCode = " + roomCode);
     // Update Socket level
-    socket.leave(roomCode);
-    socket.to(roomCode).emit("kickedFromRoom", roomCode);
+    socket.leave(exitCode);
+    socket.to(exitCode).emit("kickedFromRoom");
 
-    // Update DB level
-    globalRoomList = globalRoomList.filter((room) => {
-      room.roomCode === roomCode;
+    // Update DB level -> Host leaving to handle deletion for all players in room
+    Game3D.findOneAndDelete({ gameRoom: exitCode }, (err, foundRoom) => {
+      if (err) {
+        console.log(err);
+      } else {
+        Player.deleteMany({ room: foundRoom._id }, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            //console.log("results of deletion below:");
+            //console.log(result);
+          }
+        });
+      }
     });
   })
 
 
   // Listens for requests from client to leave an existing room
   socket.on("guestLeaveRoom", (roomCode) => {
-    console.log("guestLeaveRoom, roomCode = " + roomCode + ", socket.id = " + socket.id);
+    console.log("guestLeaveRoom, roomCode = " + roomCode);
 
     // Update Socket level
     socket.leave(roomCode);
 
     // Update DB level
-    const matchedPlayer = (player) => player.id === socket.id;
-    // For search efficiency
-    var dbLevelUpdated = false;
-
-    for (const room of globalRoomList) {
-      if (!dbLevelUpdated) {
-        if (room.players.some(matchedPlayer)) {
-          room.players = room.players.filter(player => player.id !== socket.id);
-          io.in(room.roomCode).emit("updatePlayers", room.players);
-          dbLevelUpdated = true;
-        }
+    Player.findOneAndDelete({ socketId: socket.id }, (err, player) => {
+      if (err) {
+        console.log(err);
       } else {
-        break;
+        //console.log("player removed below:");
+        //console.log(player);
+
+        Game3D.findOne({ gameRoom: roomCode }, (err, foundRoom) => {
+          if (err) {
+            console.log(err);
+          } else {
+            // Get game room ID to find all players inside that room
+            Player.find({ room: foundRoom._id }, (err, players) => {
+              if (err) {
+                console.log(err);
+              } else {
+                io.in(roomCode).emit("updatePlayers", roomCode, players);
+              }
+            })
+          }
+        })
+        
       }
-    }
-    console.log(JSON.stringify(globalRoomList));
+    });
   })
 
 
   // Listens for requests from client to start the game
   socket.on("startGame", (code) => {
-    
+
     // sending to all clients in "game" room, including sender
     io.in(code).emit("gameIsStarting", "The game will start soon...");
   })
@@ -180,25 +245,25 @@ io.on('connection', (socket) => {
   socket.on("playerWon", (code) => {
     console.log(socket.id + "has won the game in room " + code);
 
-    for (const room of globalRoomList) {
-      if (room.roomCode === code) {
-        playerWon = room.players.filter(player => player.id === socket.id);
+    // for (const room of globalRoomList) {
+    //   if (room.roomCode === code) {
+    //     playerWon = room.players.filter(player => player.id === socket.id);
 
-        const rankingsList = room.rankings;
-        rankingsList.push(playerWon[0]);
-        room.rankings = rankingsList;
+    //     const rankingsList = room.rankings;
+    //     rankingsList.push(playerWon[0]);
+    //     room.rankings = rankingsList;
 
-        // sending to all clients in "game" room, including sender
-        io.in(code).emit("updateRankings", room.rankings);
-        break;
-      }
-    }
+    //     // sending to all clients in "game" room, including sender
+    //     io.in(code).emit("updateRankings", room.rankings);
+    //     break;
+    //   }
+    // }
 
-    console.log(JSON.stringify(globalRoomList));
+    // console.log(JSON.stringify(globalRoomList));
   })
 
 });
 
-server.listen(port, "0.0.0.0", function() {
+server.listen(port, function () {
   console.log(`Server started on port ${port}.`);
 })

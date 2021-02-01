@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, ButtonGroup, ListGroup, ListGroupItem } from "react-bootstrap";
-//import socket from "../service/socket";
 import socketIOClient from "socket.io-client";
 import NumberGame3D from "./NumberGame3D";
 
 function RoomHost(props) {
 
-  const roomCode = "GREAT";
+  const [roomCode, setRoomCode] = useState("");
   const [players, setPlayers] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
@@ -17,14 +16,15 @@ function RoomHost(props) {
 
   useEffect(() => {
     console.log("init socket");
-    socket.current = socketIOClient();
+    socket.current = socketIOClient("localhost:3001");
 
-    socket.current.emit("hostRoom", roomCode, props.name);
+    socket.current.emit("hostRoom", props.name);
     console.log("hostRoom in progress (emit)");
 
-    socket.current.on("updatePlayers", (data) => {
+    socket.current.on("updatePlayers", (code, list) => {
       console.log("host: updatePlayers");
-      setPlayers(data);
+      setRoomCode(code);
+      setPlayers(list);
     });
 
     socket.current.on("gameIsStarting", (data) => {
