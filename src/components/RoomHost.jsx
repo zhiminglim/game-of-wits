@@ -16,7 +16,7 @@ function RoomHost(props) {
 
   useEffect(() => {
     console.log("init socket");
-    socket.current = socketIOClient("localhost:3001");
+    socket.current = socketIOClient();
 
     socket.current.emit("hostRoom", props.name);
     console.log("hostRoom in progress (emit)");

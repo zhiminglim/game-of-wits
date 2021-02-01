@@ -19,7 +19,7 @@ function RoomJoin(props) {
 
   useEffect(() => {
     console.log("init socket");
-    socket.current = socketIOClient("localhost:3001");
+    socket.current = socketIOClient();
     
     socket.current.on("updatePlayers", (code, list) => {
       console.log("updatePlayers listening");
