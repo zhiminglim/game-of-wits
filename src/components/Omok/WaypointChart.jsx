@@ -2,7 +2,7 @@ import React from "react";
 import CanvasJSReact from "../../assets/canvasjs.react";
 
 function WaypointChart(props) {
-  var CanvasJS = CanvasJSReact.CanvasJS;
+  //var CanvasJS = CanvasJSReact.CanvasJS;
   var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
   const eachWaypoint = () => {
