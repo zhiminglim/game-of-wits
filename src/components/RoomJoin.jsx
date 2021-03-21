@@ -18,19 +18,13 @@ function RoomJoin(props) {
 
 
   useEffect(() => {
-    console.log("init socket");
-    //Dev
-    //socket.current = socketIOClient("localhost:3001");
-    //Master
-    socket.current = socketIOClient();
+    socket.current = socketIOClient(process.env.REACT_APP_SERVER_URL);
     
     socket.current.on("updatePlayers", (code, list) => {
-      console.log("updatePlayers listening");
       setPlayers(list);
     });
 
     socket.current.on("gameIsStarting", (data) => {
-      console.log(data);
       setGameStarted(true);
     })
 
@@ -51,7 +45,7 @@ function RoomJoin(props) {
 
   function handleCodeEnter() {
     socket.current.emit("findAndJoinRoom", roomCode, props.name, (response) => {
-      console.log("client: findRoom " + response.status); // ok
+      //console.log("client: findRoom " + response.status);
       if (response.status === "ok") {
         setRoomFound(true);
       }

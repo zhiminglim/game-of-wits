@@ -8,37 +8,20 @@ function OmokIntro() {
   const [topSidsWp, setTopSidsWp] = useState();
   const [topStarsWp, setTopStarsWp] = useState();
 
-  const API_SID_URL = "https://busy-waypoints.azurewebsites.net/api/v1/sids/busy-waypoints";
-  const API_STAR_URL = "https://busy-waypoints.azurewebsites.net/api/v1/stars/busy-waypoints";
-
   useEffect(() => {
 
-    // const API_URL = "https://busy-waypoints.azurewebsites.net/api/v1/sids/busy-waypoints";
-    // fetch(API_URL, {
-    //   method: "GET"
-    // })
-    // .then(response => response.json())
-    // .then(json => {
-    //   console.log("fetched json below:");
-    //   console.log(json);
-    //   setTopSidsWp(json);
-    //   setIsLoading(false);
-    // })
-    // .catch(err => console.log(err));
-
-
     Promise.all([
-      fetch(API_SID_URL, {method: "GET"}),
-      fetch(API_STAR_URL, {method: "GET"}),
+      fetch(process.env.REACT_APP_API_SID_URL, {method: "GET"}),
+      fetch(process.env.REACT_APP_API_STAR_URL, {method: "GET"}),
     ]).then(responses => {
       return Promise.all(responses.map(response => {
         return response.json();
       }));
     }).then(data => {
-      console.log("data from both fetch below: ");
-      console.log(data);
-      console.log(data[0]);
-      console.log(data[1]);
+      // console.log("data from both fetch below: ");
+      // console.log(data);
+      // console.log(data[0]);
+      // console.log(data[1]);
       
       // TODO: work out a way to show api fail responses
       if (data.length > 1) {
