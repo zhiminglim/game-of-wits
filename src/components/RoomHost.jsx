@@ -15,12 +15,6 @@ function RoomHost(props) {
 
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      console.log("in development mode");
-    } else {
-      console.log(`in ${process.env.NODE_ENV} mode`);
-    }
-
     socket.current = socketIOClient(process.env.REACT_APP_SERVER_URL);
     socket.current.emit("hostRoom", props.name);
 
