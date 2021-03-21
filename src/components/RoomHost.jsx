@@ -15,8 +15,6 @@ function RoomHost(props) {
 
 
   useEffect(() => {
-    console.log("init socket");
-    
     if (process.env.NODE_ENV === "development") {
       console.log("in development mode");
     } else {
@@ -27,13 +25,11 @@ function RoomHost(props) {
     socket.current.emit("hostRoom", props.name);
 
     socket.current.on("updatePlayers", (code, list) => {
-      console.log("host: updatePlayers");
       setRoomCode(code);
       setPlayers(list);
     });
 
     socket.current.on("gameIsStarting", (data) => {
-      console.log(data);
       setGameStarted(true);
     });
 
