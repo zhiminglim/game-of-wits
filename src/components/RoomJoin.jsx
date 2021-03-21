@@ -19,10 +19,14 @@ function RoomJoin(props) {
 
   useEffect(() => {
     console.log("init socket");
-    //Dev
-    //socket.current = socketIOClient("localhost:3001");
-    //Master
-    socket.current = socketIOClient();
+    
+    if (process.env.NODE_ENV === "development") {
+      console.log("in development mode");
+    } else {
+      console.log(`in ${process.env.NODE_ENV} mode`);
+    }
+
+    socket.current = socketIOClient(process.env.REACT_APP_SERVER_URL);
     
     socket.current.on("updatePlayers", (code, list) => {
       console.log("updatePlayers listening");
