@@ -8,14 +8,11 @@ function OmokIntro() {
   const [topSidsWp, setTopSidsWp] = useState();
   const [topStarsWp, setTopStarsWp] = useState();
 
-  const API_SID_URL = process.env.REACT_APP_API_SID_URL;
-  const API_STAR_URL = process.env.REACT_APP_API_STAR_URL;
-
   useEffect(() => {
 
     Promise.all([
-      fetch(API_SID_URL, {method: "GET"}),
-      fetch(API_STAR_URL, {method: "GET"}),
+      fetch(process.env.REACT_APP_API_SID_URL, {method: "GET"}),
+      fetch(process.env.REACT_APP_API_STAR_URL, {method: "GET"}),
     ]).then(responses => {
       return Promise.all(responses.map(response => {
         return response.json();
