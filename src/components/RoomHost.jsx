@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, ButtonGroup, ListGroup, ListGroupItem } from "react-bootstrap";
+import { Button, ButtonGroup, ListGroup, ListGroupItem, Spinner } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
 import NumberGame3D from "./NumberGame3D";
 
@@ -10,6 +10,7 @@ function RoomHost(props) {
   const [players, setPlayers] = useState([]);
   const [rankings, setRankings] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
+  const [loading, setLoading] = useState(true);
   const socket = useRef();
   let history = useHistory();
 
@@ -21,6 +22,7 @@ function RoomHost(props) {
     socket.current.on("updatePlayers", (code, list) => {
       setRoomCode(code);
       setPlayers(list);
+      setLoading(false);
     });
 
     socket.current.on("gameIsStarting", (data) => {
@@ -32,7 +34,7 @@ function RoomHost(props) {
     })
     
     return () => {
-      console.log("unmounting");
+      // console.log("unmounting");
       socket.current.disconnect();
     }
   }, [props.name]);
@@ -47,7 +49,25 @@ function RoomHost(props) {
     history.goBack();
   }
 
-  function beforeStartGame() {
+  function isLoadingData() {
+    return (
+      <div style={{ "margin": "50px auto"}}>
+        <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+      </Spinner>
+      </div>
+    );
+  }
+
+  function loadPreGameComponent() {
+    return (
+      <div>
+        {loading ? isLoadingData() : preGameComponent() }
+      </div>
+    );
+  }
+
+  function preGameComponent() {
     return (
       <div>
         <h3 style={{ margin: "30px auto" }}>GAME CODE: {roomCode}</h3>
@@ -101,7 +121,7 @@ function RoomHost(props) {
 
   return (
     <div>
-      {gameStarted ? gameInProgress() : beforeStartGame() }
+      {gameStarted ? gameInProgress() : loadPreGameComponent() }
     </div>
   );
 }
