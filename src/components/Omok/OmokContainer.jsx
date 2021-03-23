@@ -17,26 +17,38 @@ function OmokContainer(props) {
   }
 
   function showSidsContent() {
-    // TODO: currently only 1 airport supported SID so temporary using [0]
-    // To cater for entire array later (maybe with carousel component)
     return (
-      <div style={{ margin: "auto"}}>
-        <WaypointChart
-          wp={props.topSidsWp[0]}
-          axisYInterval={2}
-          axisYMin={10}
-        />
+      <div>
+        {props.topSidsWp.map((element) => {
+          return (
+            <div style={{padding: "10px 2px"}}>
+              <WaypointChart 
+                wp={element} 
+                axisYInterval={2} 
+                axisYMin={0} 
+              />
+            </div>
+          );
+        })}
       </div>
     );
   }
 
   function showStarsContent() {
     return (
-      <WaypointChart 
-        wp={props.topStarsWp[0]} 
-        axisYInterval={1} 
-        axisYMin={0} 
-      />
+      <div>
+        {props.topStarsWp.map((element) => {
+          return (
+            <div style={{padding: "10px 2px"}}>
+              <WaypointChart 
+                wp={element} 
+                axisYInterval={1} 
+                axisYMin={0} 
+              />
+            </div>
+          );
+        })}
+      </div>
     );
   }
 

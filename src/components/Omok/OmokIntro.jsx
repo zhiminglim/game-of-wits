@@ -35,7 +35,7 @@ function OmokIntro() {
 
 
   return (
-    <div>
+    <div style={{ margin: "10px 0 30px"}}>
       <OmokInstruction />
       <OmokContainer 
         loader={isLoading}
