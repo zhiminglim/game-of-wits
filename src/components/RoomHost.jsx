@@ -13,10 +13,16 @@ function RoomHost(props) {
   const [loading, setLoading] = useState(true);
   const socket = useRef();
   let history = useHistory();
+  let socketURL;
 
+  if (process.env.NODE_ENV === "development") {
+    socketURL = "http://localhost:3001";
+  } else {
+    socketURL = process.env.REACT_APP_SERVER_URL;
+  }
 
   useEffect(() => {
-    socket.current = socketIOClient(process.env.REACT_APP_SERVER_URL);
+    socket.current = socketIOClient(socketURL);
     socket.current.emit("hostRoom", props.name);
 
     socket.current.on("updatePlayers", (code, list) => {
@@ -37,7 +43,7 @@ function RoomHost(props) {
       // console.log("unmounting");
       socket.current.disconnect();
     }
-  }, [props.name]);
+  }, [props.name, socketURL]);
 
 
   function handleStartButton() {
