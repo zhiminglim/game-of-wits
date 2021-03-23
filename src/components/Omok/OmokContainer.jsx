@@ -8,9 +8,11 @@ function OmokContainer(props) {
 
   function showSpinner() {
     return (
-      <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
+      <div style={{ margin : "50px auto" }}>
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>
     );
   }
 
@@ -18,11 +20,13 @@ function OmokContainer(props) {
     // TODO: currently only 1 airport supported SID so temporary using [0]
     // To cater for entire array later (maybe with carousel component)
     return (
-      <WaypointChart 
-        wp={props.topSidsWp[0]} 
-        axisYInterval={2} 
-        axisYMin={10} 
-      />
+      <div style={{ margin: "auto"}}>
+        <WaypointChart
+          wp={props.topSidsWp[0]}
+          axisYInterval={2}
+          axisYMin={10}
+        />
+      </div>
     );
   }
 
@@ -42,6 +46,7 @@ function OmokContainer(props) {
         id="controlled-tab-example"
         activeKey={key}
         onSelect={(k) => setKey(k)}
+        transition={false}
       >
         <Tab eventKey="sids" title="SIDs">
           {props.loader ? showSpinner() : showSidsContent()}
