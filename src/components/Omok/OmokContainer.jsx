@@ -24,7 +24,6 @@ function OmokContainer(props) {
             <div style={{padding: "10px 2px"}}>
               <WaypointChart 
                 wp={element} 
-                axisYInterval={2} 
                 axisYMin={0} 
               />
             </div>
@@ -42,7 +41,6 @@ function OmokContainer(props) {
             <div style={{padding: "10px 2px"}}>
               <WaypointChart 
                 wp={element} 
-                axisYInterval={1} 
                 axisYMin={0} 
               />
             </div>
