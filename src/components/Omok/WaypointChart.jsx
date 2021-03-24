@@ -25,7 +25,6 @@ function WaypointChart(props) {
       },
     ],
     axisY:{
-      interval: props.axisYInterval,
       minimum: props.axisYMin
     },
   };
